@@ -1,0 +1,43 @@
+{
+  "name": "dns-identity-resolution",
+  "version": "0.0.1",
+  "description": "Resolve identities from domains",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "changelog": "conventional-changelog --same-file --preset angular --release-count 0 --infile CHANGELOG.md",
+    "api-docs": "jsdoc *.js -d docs",
+    "version": "npm run api-docs && npm run changelog && git add CHANGELOG.md docs/"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arablocks/dns-identity-resolution.git"
+  },
+  "keywords": [
+    "dns",
+    "dns-identity-resolution"
+  ],
+  "author": "Madeline Cameron <madeline@littlstar.com>",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/arablocks/dns-identity-resolution/issues"
+  },
+  "homepage": "https://github.com/arablocks/dns-identity-resolution#readme",
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "devDependencies": {
+    "conventional-changelog-cli": "^2.0.5",
+    "eslint": "^4.19.1",
+    "eslint-config-ara": "arablocks/eslint-config-ara#semver:2.1.x",
+    "eslint-plugin-import": "^2.12.0",
+    "jsdoc": "^3.5.5"
+  },
+  "dependencies": {
+    "did-uri": "^0.2.6",
+    "dns-socket": "^4.1.1"
+  }
+}
