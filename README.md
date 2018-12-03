@@ -1,4 +1,4 @@
-<img src="https://github.com/arablocks/dns-identity-resolution/blob/master/ara.png" width="30" height="30" /> dns-identity-resolution
+<img src="https://github.com/arablocks/ara-module-template/blob/master/ara.png" width="30" height="30" /> dns-identity-resolution
 ========
 
 Get DIDs stored in TXT records for domains

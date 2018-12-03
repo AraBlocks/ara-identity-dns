@@ -1,8 +1,9 @@
 {
-  "name": "dns-identity-resolution",
+  "name": "ara-identity-dns",
   "version": "0.1.2",
   "description": "Resolve identities from domains",
   "main": "index.js",
+  "browser": "path/to/browser-main.js",
   "scripts": {
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
@@ -15,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arablocks/dns-identity-resolution.git"
+    "url": "git+https://github.com/arablocks/ara-identity-dns.git"
   },
   "keywords": [
     "dns",
@@ -24,9 +25,9 @@
   "author": "Madeline Cameron <madeline@littlstar.com>",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/arablocks/dns-identity-resolution/issues"
+    "url": "https://github.com/arablocks/ara-identity-dns/issues"
   },
-  "homepage": "https://github.com/arablocks/dns-identity-resolution#readme",
+  "homepage": "https://github.com/arablocks/ara-identity-dns#readme",
   "peerDependencies": {},
   "optionalDependencies": {},
   "devDependencies": {
@@ -38,6 +39,8 @@
   },
   "dependencies": {
     "did-uri": "^0.2.6",
-    "dns-socket": "^4.1.1"
+    "dns-over-http": "^0.1.2",
+    "dns-socket": "^4.1.1",
+    "multicast-dns": "^7.2.0"
   }
 }
