@@ -24,9 +24,11 @@ const getDID = ({ domain, dns = '8.8.8.8', port = 53 }) => {
         return resolve(null)
       }
       try {
-        return resolve(response.answers[0].data.toString())
+        const id = new DID(response.answers[0].data.toString())
+
+        return resolve(id.reference)
       } catch (e) {
-        return reject(e)
+        return reject(`Could not resolve ${domain} from ${dns}:${port}: ` + e.message)
       }
     })
   })
