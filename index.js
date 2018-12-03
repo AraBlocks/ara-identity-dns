@@ -24,9 +24,7 @@ const getDID = ({ domain, dns = '8.8.8.8', port = 53 }) => {
         return resolve(null)
       }
       try {
-        const id = new DID(response.answers[0].data.toString())
-
-        return resolve(id)
+        return resolve(response.answers[0].data.toString())
       } catch (e) {
         return reject(e)
       }
