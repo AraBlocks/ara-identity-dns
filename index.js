@@ -6,7 +6,6 @@ const once = require('once')
 
 const {
   Questions,
-  ondata,
   onanswer
 } = require('./lib/utils')
 
@@ -91,9 +90,8 @@ async function resolve(address, opts) {
         }
 
         return done(null, dids)
-      } else {
-        return done(null, [])
       }
+      return done(null, [])
     }
   }
 }
