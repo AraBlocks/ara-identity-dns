@@ -1,9 +1,5 @@
-const express = require('express')
+const browser = require('../../browser')
 
-const app = express()
-
-app.use(express.static('public'))
-
-console.log("LISTERNING ON 3000")
-
-app.listen(3000)
+// Run with `budo`
+browser.resolve('araid.qnzl.co')
+  .then(console.log)
