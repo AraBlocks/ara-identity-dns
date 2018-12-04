@@ -1,5 +1,5 @@
 function resolve(address) {
-  return window.fetch(`https://dns.google.com/resolve?name=${address}&type=TXT`, { method: "GET" })
+  return window.fetch(`https://dns.google.com/resolve?name=${address}&type=TXT`, { method: 'GET' })
     .then(async (response) => {
       const body = await response.json()
       const { Answer: answers } = body
@@ -11,9 +11,8 @@ function resolve(address) {
         }
 
         return dids
-      } else {
-        return []
       }
+      return []
     })
     .catch(console.error)
 }
