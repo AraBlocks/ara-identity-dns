@@ -1,37 +1,103 @@
-const dnsSocket = require('dns-socket')
-const { DID } = require('did-uri')
+const Socket = require('dns-socket')
+const debug = require('debug')('ara:identity-dns')
+const mDNS = require('multicast-dns')
+const pify = require('pify')
+const once = require('once')
 
-/**
- * Get DID from TXT DNS record for the given domain
- *
- * @param  {String}  options.domain  Domain name to search (for non-root records, use <name>.<domain>)
- * @param  {String}  [options.dns]   IP of DNS server
- * @param  {Number}  [options.port]  Port to talk to DNS through
- *
- * @return {DID}                     Object containing info about DID
- */
-const getDID = ({ domain, dns = '8.8.8.8', port = 53 }) => {
-  const socket = dnsSocket()
+const {
+  Questions,
+  ondata,
+  onanswer
+} = require('./lib/utils')
 
-  return new Promise((resolve, reject) => {
-    socket.query({
-      questions: [ {
-        type: 'TXT',
-        name: domain
-      } ]
-    }, port, dns, (err, response) => {
-      if (0 === response.answers.length) {
-        return resolve(null)
+async function resolve(address, opts) {
+  const _opts = Object.assign({ port: '53', server: '1.1.1.1' }, opts)
+
+  const questions = Questions(address)
+  const socket = Socket(_opts.socket)
+  const mdns = mDNS(_opts.multicast)
+
+  if (Array.isArray(_opts.port) && !Array.isArray(_opts.ports)) {
+    _opts.ports = _opts.port
+  }
+
+  if (Array.isArray(_opts.server) && !Array.isArray(_opts.servers)) {
+    _opts.servers = _opts.server
+  }
+
+  const ports = Array.isArray(_opts.ports)
+    ? _opts.ports
+    : [ _opts.ports || _opts.port ]
+
+  const servers = Array.isArray(_opts.servers)
+    ? _opts.servers
+    : [ _opts.servers || _opts.server ]
+
+  debug('questions', questions)
+
+  return pify(query)()
+
+  function query(cb) {
+    const done = once(finish)
+
+    socket.on('response', ondnsresponse)
+    socket.on('error', onerror)
+
+    mdns.on('response', onmdnsresponse)
+    mdns.on('error', onerror)
+
+    debug('mdns query')
+    mdns.query({ questions })
+
+    for (const host of servers) {
+      for (const port of ports) {
+        socket.query({ questions }, port, host)
+        debug('dns query', port, host)
       }
-      try {
-        const id = new DID(response.answers[0].data.toString())
+    }
 
-        return resolve(id.reference)
-      } catch (e) {
-        return reject(`Could not resolve ${domain} from ${dns}:${port}: ` + e.message)
+    function onerror(err) {
+      debug('err:', err)
+      return done(err)
+    }
+
+    function finish(err, res) {
+      if (err) {
+        cb(err)
+      } else {
+        socket.destroy()
+        mdns.destroy()
+        cb(null, res)
       }
-    })
-  })
+    }
+
+    function ondnsresponse(res, port, host) {
+      debug('dns: response:', host, port)
+      onresponse(res)
+    }
+
+    function onmdnsresponse(res, rinfo) {
+      debug('mdns: response:', rinfo.host, rinfo.port)
+      onresponse(res)
+    }
+
+    function onresponse(res) {
+      const { answers } = res
+
+      if (Array.isArray(answers)) {
+        const dids = []
+        for (const answer of answers) {
+          dids.push(onanswer(answer))
+        }
+
+        return done(null, dids)
+      } else {
+        return done(null, [])
+      }
+    }
+  }
 }
 
-module.exports = { getDID }
+module.exports = {
+  resolve
+}
