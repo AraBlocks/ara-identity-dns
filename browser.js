@@ -14,7 +14,6 @@ function resolve(address) {
       }
       return []
     })
-    .catch(console.error)
 }
 
 module.exports = {
