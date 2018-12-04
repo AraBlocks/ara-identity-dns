@@ -5,8 +5,8 @@
   "main": "index.js",
   "browser": "browser.js",
   "scripts": {
-    "lint": "eslint .",
-    "lint-fix": "eslint . --fix",
+    "lint": "eslint *.js",
+    "lint-fix": "eslint *.js --fix",
     "changelog": "conventional-changelog --same-file --preset angular --release-count 0 --infile CHANGELOG.md",
     "api-docs": "jsdoc *.js -d docs",
     "version": "npm run api-docs && npm run changelog && git add CHANGELOG.md docs/"
@@ -38,9 +38,12 @@
     "jsdoc": "^3.5.5"
   },
   "dependencies": {
+    "debug": "^4.1.0",
     "did-uri": "^0.2.6",
     "dns-over-http": "^0.1.2",
     "dns-socket": "^4.1.1",
-    "multicast-dns": "^7.2.0"
+    "multicast-dns": "^7.2.0",
+    "once": "^1.4.0",
+    "pify": "^4.0.1"
   }
 }

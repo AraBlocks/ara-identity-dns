@@ -6,7 +6,7 @@ const {
 } = require('./lib/utils')
 
 function resolve(address, opts, cb) {
-  if (typeof opts == 'function') {
+  if ('function' === typeof opts) {
     cb = opts
     opts = {}
   }
@@ -28,9 +28,8 @@ function resolve(address, opts, cb) {
       }
 
       return cb(null, dids)
-    } else {
-      return cb(null, [])
     }
+    return cb(null, [])
   })
 }
 
