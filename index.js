@@ -1,13 +1,11 @@
+const { DID } = require('did-uri')
 const Socket = require('dns-socket')
 const debug = require('debug')('ara:identity-dns')
 const mDNS = require('multicast-dns')
 const pify = require('pify')
 const once = require('once')
 
-const {
-  Questions,
-  onanswer
-} = require('./lib/utils')
+const AID_PREFIX = Buffer.from('did:ara:')
 
 async function resolve(address, opts) {
   const _opts = Object.assign({ port: '53', server: '1.1.1.1' }, opts)
@@ -35,6 +33,13 @@ async function resolve(address, opts) {
   debug('questions', questions)
 
   return pify(query)()
+
+  function Questions(name, type) {
+    return [ {
+      name,
+      type: type || 'TXT'
+    } ]
+  }
 
   function query(cb) {
     const done = once(finish)
@@ -78,6 +83,22 @@ async function resolve(address, opts) {
     function onmdnsresponse(res, rinfo) {
       debug('mdns: response:', rinfo.host, rinfo.port)
       onresponse(res)
+    }
+
+    function onanswer(answer) {
+      if ('TXT' === answer.type) {
+        return ondata(answer.data[0])
+      }
+      return null
+    }
+
+    function ondata(data) {
+      const prefix = data.slice(0, AID_PREFIX.length)
+
+      if (0 === Buffer.compare(prefix, AID_PREFIX)) {
+        return new DID(data.toString())
+      }
+      return null
     }
 
     function onresponse(res) {
