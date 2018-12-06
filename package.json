@@ -1,6 +1,6 @@
 {
   "name": "ara-identity-dns",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Resolve identities from domains",
   "main": "index.js",
   "browser": "browser.js",
