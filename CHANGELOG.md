@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/arablocks/ara-identity-dns/compare/0.2.0...0.2.1) (2018-12-09)
+
+
+### Bug Fixes
+
+* **index.js:** Fix resolution on first record ([e951985](https://github.com/arablocks/ara-identity-dns/commit/e951985))
+
+
+
 # [0.2.0](https://github.com/arablocks/ara-identity-dns/compare/0.1.2...0.2.0) (2018-12-06)
 
 
