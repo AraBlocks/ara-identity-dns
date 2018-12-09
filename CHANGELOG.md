@@ -1,3 +1,7 @@
+## [0.2.2](https://github.com/arablocks/ara-identity-dns/compare/0.2.1...0.2.2) (2018-12-09)
+
+
+
 ## [0.2.1](https://github.com/arablocks/ara-identity-dns/compare/0.2.0...0.2.1) (2018-12-09)
 
 
