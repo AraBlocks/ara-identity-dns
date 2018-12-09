@@ -5,10 +5,15 @@ const mDNS = require('multicast-dns')
 const pify = require('pify')
 const once = require('once')
 
+const DEFAULT_TIMEOUT = 2000
 const AID_PREFIX = Buffer.from('did:ara:')
 
 async function resolve(address, opts) {
-  const _opts = Object.assign({ port: '53', server: '1.1.1.1' }, opts)
+  const _opts = Object.assign({
+    port: '53',
+    server: '1.1.1.1',
+    timeout: DEFAULT_TIMEOUT,
+  }, opts)
 
   const questions = Questions(address)
   const socket = Socket(_opts.socket)
@@ -44,11 +49,13 @@ async function resolve(address, opts) {
   function query(cb) {
     const done = once(finish)
 
+    timeout()
+
     socket.on('response', ondnsresponse)
     socket.on('error', onerror)
 
-    mdns.on('response', onmdnsresponse)
     mdns.on('error', onerror)
+    mdns.on('response', onmdnsresponse)
 
     debug('mdns query')
     mdns.query({ questions })
@@ -65,14 +72,22 @@ async function resolve(address, opts) {
       return done(err)
     }
 
-    function finish(err, res) {
-      if (err) {
-        cb(err)
-      } else {
-        socket.destroy()
-        mdns.destroy()
-        cb(null, res)
+    function ontimeout() {
+      done(new Error('DNS resolution request did timeout'))
+    }
+
+    function timeout(again) {
+      clearTimeout(timeout.timer)
+      if (false !== again) {
+        timeout.timer = setTimeout(ontimeout, _opts.timeout)
       }
+    }
+
+    function finish(err, res) {
+      cb(err, res)
+      timeout(false)
+      socket.destroy()
+      mdns.destroy()
     }
 
     function ondnsresponse(res, port, host) {
@@ -98,21 +113,30 @@ async function resolve(address, opts) {
       if (0 === Buffer.compare(prefix, AID_PREFIX)) {
         return new DID(data.toString())
       }
+
       return null
     }
 
     function onresponse(res) {
       const { answers } = res
 
+      timeout(false)
+
       if (Array.isArray(answers)) {
         const dids = []
         for (const answer of answers) {
-          dids.push(onanswer(answer))
+          const result = onanswer(answer)
+          if (result) {
+            dids.push(result)
+          }
         }
 
-        return done(null, dids)
+        if (dids.length) {
+          return done(null, dids)
+        }
       }
-      return done(null, [])
+
+      return timeout()
     }
   }
 }
