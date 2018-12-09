@@ -43,6 +43,7 @@
     "dns-over-http": "^0.1.2",
     "dns-socket": "^4.1.1",
     "multicast-dns": "^7.2.0",
+    "node-fetch": "^2.3.0",
     "once": "^1.4.0",
     "pify": "^4.0.1"
   }
