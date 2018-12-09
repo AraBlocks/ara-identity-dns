@@ -1,5 +1,7 @@
-const browser = require('../../browser')
+const browser = require('../browser')
+const assert = require('assert')
 
 // Run with `budo`
 browser.resolve('araid.qnzl.co')
-  .then(console.log)
+  .then(assert)
+  // .then(console.log)
