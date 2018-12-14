@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "debug": "^4.1.0",
-    "did-uri": "^0.2.6",
+    "did-uri": "^0.2.8",
     "dns-over-http": "^0.1.2",
     "dns-socket": "^4.1.1",
     "multicast-dns": "^7.2.0",
