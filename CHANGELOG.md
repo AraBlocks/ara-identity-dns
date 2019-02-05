@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/arablocks/ara-identity-dns/compare/0.2.3...0.3.0) (2019-02-05)
+
+
+### Features
+
+* **.:** Allow other record types to be queried ([a7b11ba](https://github.com/arablocks/ara-identity-dns/commit/a7b11ba))
+
+
+
 ## [0.2.3](https://github.com/arablocks/ara-identity-dns/compare/0.2.2...0.2.3) (2018-12-14)
 
 
