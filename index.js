@@ -11,13 +11,16 @@ const AID_PREFIX = Buffer.from('did:ara:')
 async function resolve(address, opts) {
   const _opts = Object.assign({
     port: '53',
+    type: 'TXT',
     server: '1.1.1.1',
     timeout: DEFAULT_TIMEOUT,
   }, opts)
 
-  const questions = Questions(address)
+  const questions = Questions(address, _opts.type)
   const socket = Socket(_opts.socket)
   const mdns = mDNS(_opts.multicast)
+
+  let results = 0
 
   if (Array.isArray(_opts.port) && !Array.isArray(_opts.ports)) {
     _opts.ports = _opts.port
@@ -40,10 +43,7 @@ async function resolve(address, opts) {
   return pify(query)()
 
   function Questions(name, type) {
-    return [ {
-      name,
-      type: type || 'TXT'
-    } ]
+    return [ { name, type } ]
   }
 
   function query(cb) {
@@ -73,7 +73,11 @@ async function resolve(address, opts) {
     }
 
     function ontimeout() {
-      done(new Error('DNS resolution request did timeout'))
+      if (0 === results) {
+        done(new Error('DNS resolution request did timeout'))
+      } else {
+        done(null, [])
+      }
     }
 
     function timeout(again) {
@@ -101,14 +105,20 @@ async function resolve(address, opts) {
     }
 
     function onanswer(answer) {
-      if ('TXT' === answer.type) {
-        return ondata(answer.data[0])
+      if (_opts.type === answer.type) {
+        for (const data of answer.data) {
+          const result = ondata(data)
+          if (result) {
+            return result
+          }
+        }
       }
-      return null
+
+      return answer.data[0]
     }
 
     function ondata(data) {
-      const prefix = data.slice(0, AID_PREFIX.length)
+      const prefix = Buffer.from(data.slice(0, AID_PREFIX.length))
 
       if (0 === Buffer.compare(prefix, AID_PREFIX)) {
         return new DID(data.toString())
@@ -126,7 +136,8 @@ async function resolve(address, opts) {
         const dids = []
         for (const answer of answers) {
           const result = onanswer(answer)
-          if (result) {
+          results++
+          if (result && result instanceof DID) {
             dids.push(result)
           }
         }

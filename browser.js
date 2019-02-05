@@ -3,8 +3,9 @@ const fetch = require('node-fetch')
 
 const AID_PREFIX = 'did:ara:'
 
-function resolve(address) {
-  const uri = `https://dns.google.com/resolve?name=${address}&type=TXT`
+function resolve(address, ropts) {
+  const type = ropts && ropts.type ? ropts.type : 'TXT'
+  const uri = `https://dns.google.com/resolve?name=${address}&type=${type}`
   const opts = { method: 'GET' }
 
   return fetch(uri, opts).then(onresponse)
